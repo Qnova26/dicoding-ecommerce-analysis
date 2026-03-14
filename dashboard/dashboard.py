@@ -11,7 +11,6 @@ st.set_page_config(page_title="E-Commerce Dashboard", layout="wide")
 sns.set(style='dark')
 
 # --- Helper Functions (Optimized with Caching) ---
-
 @st.cache_data
 def create_daily_orders_df(df):
     daily_orders_df = df.resample(rule='D', on='order_purchase_timestamp').agg({
@@ -81,7 +80,6 @@ with st.sidebar:
 
     st.divider()
 
-    # Informasi Penulis
     with st.expander("ℹ️ Tentang Pengembang"):
         st.write("**Nama:** Carlos Qnova Bha'a Gani")
         st.write("**Email:** carlosqnova88@gmail.com")
@@ -103,7 +101,6 @@ else:
     sum_order_items_df = create_sum_order_items_df(main_df)
     rfm_df = create_rfm_df(main_df)
 
-    # Ringkasan Metrik Utama
     col1, col2, col3 = st.columns(3)
     with col1:
         st.metric("Total Orders", value=daily_orders_df.order_count.sum())
@@ -135,18 +132,15 @@ else:
         fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(24, 10))
         colors = ["#72BCD4", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3"]
 
-        # Best Products (Ditambah hue dan legend=False agar tidak error log)
         sns.barplot(x="product_id", y="product_category_name_english", data=sum_order_items_df.head(5), palette=colors, hue="product_category_name_english", legend=False, ax=ax[0])
         ax[0].set_title("Best Performing Product", loc="center", fontsize=18)
         ax[0].set_xlabel(None)
 
-        # Worst Products
         sns.barplot(x="product_id", y="product_category_name_english", data=sum_order_items_df.sort_values(by="product_id", ascending=True).head(5), palette=colors, hue="product_category_name_english", legend=False, ax=ax[1])
         ax[1].set_title("Worst Performing Product", loc="center", fontsize=18)
         ax[1].invert_xaxis()
         ax[1].yaxis.tick_right()
         ax[1].set_xlabel(None)
-        
         st.pyplot(fig)
 
     with tab3:
@@ -154,21 +148,17 @@ else:
         fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(30, 10))
         colors = ["#72BCD4"] * 5
 
-        # Recency
         sns.barplot(y="recency", x="customer_id", data=rfm_df.sort_values(by="recency", ascending=True).head(5), palette=colors, hue="customer_id", legend=False, ax=ax[0])
         ax[0].set_title("By Recency (days)", fontsize=20)
         ax[0].tick_params(axis='x', rotation=45)
 
-        # Frequency
         sns.barplot(y="frequency", x="customer_id", data=rfm_df.sort_values(by="frequency", ascending=False).head(5), palette=colors, hue="customer_id", legend=False, ax=ax[1])
         ax[1].set_title("By Frequency", fontsize=20)
         ax[1].tick_params(axis='x', rotation=45)
 
-        # Monetary
         sns.barplot(y="monetary", x="customer_id", data=rfm_df.sort_values(by="monetary", ascending=False).head(5), palette=colors, hue="customer_id", legend=False, ax=ax[2])
         ax[2].set_title("By Monetary", fontsize=20)
         ax[2].tick_params(axis='x', rotation=45)
-
         st.pyplot(fig)
 
 st.caption('Copyright (c) 2026 - Analisis Data E-Commerce')
